@@ -3,7 +3,8 @@ import * as XLSX from "xlsx";
 
 export const StoreContext = createContext(null);
 
-const API_BASE_URL = "http://localhost:4000/api/files";
+// const API_BASE_URL = "http://localhost:4000/api/files";
+const API_BASE_URL = "https://proto-assignment-backend.onrender.com";
 
 const normalizeUrl = (value) => {
   if (!value) return null;
