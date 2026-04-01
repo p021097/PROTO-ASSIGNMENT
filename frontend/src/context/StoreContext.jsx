@@ -3,8 +3,9 @@ import * as XLSX from "xlsx";
 
 export const StoreContext = createContext(null);
 
-// const API_BASE_URL = "http://localhost:4000/api/files";
-const API_BASE_URL = "https://proto-assignment-backend.onrender.com/api/files/upload";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://localhost:4000/api/files";
 
 const normalizeUrl = (value) => {
   if (!value) return null;
