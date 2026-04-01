@@ -1,0 +1,22 @@
+.navbar {
+  background: #1f2937;
+  color: #fff;
+  padding: 18px 0;
+  border-bottom: 1px solid #334155;
+}
+
+.navbar__inner {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.navbar h1 {
+  font-size: 1.85rem;
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+
+.navbar p {
+  color: #d1d5db;
+  font-size: 0.95rem;
+}
