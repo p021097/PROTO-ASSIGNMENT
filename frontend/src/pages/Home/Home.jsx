@@ -14,6 +14,7 @@ const Home = () => {
     isLoading,
     isHistoryLoading,
     error,
+    successMessage,
     previousFiles,
     selectedFileId,
     handleFileUpload,
@@ -33,6 +34,10 @@ const Home = () => {
 
   return (
     <main className="home">
+      {successMessage && (
+        <div className="toast toast-success">{successMessage}</div>
+      )}
+
       <section className="upload-panel">
         <div className="card">
           <div className="section-heading">

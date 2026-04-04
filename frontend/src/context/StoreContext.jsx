@@ -63,6 +63,7 @@ const StoreContextProvider = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isHistoryLoading, setIsHistoryLoading] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [previousFiles, setPreviousFiles] = useState([]);
   const [selectedFileId, setSelectedFileId] = useState("");
 
@@ -73,20 +74,23 @@ const StoreContextProvider = (props) => {
     setCurrentIndex(0);
     setSourceName("");
     setError("");
+    setSuccessMessage("");
     setSelectedFileId("");
   };
 
-  const loadUrls = (nextUrls, name = "") => {
+  const loadUrls = (nextUrls, name = "", successText = "") => {
     setUrls(nextUrls);
     setCurrentIndex(0);
     setSourceName(name);
 
     if (!nextUrls.length) {
+      setSuccessMessage("");
       setError("No valid website URLs were found in the uploaded sheet.");
       return;
     }
 
     setError("");
+    setSuccessMessage(successText);
   };
 
   const handleFileUpload = async (file) => {
@@ -94,6 +98,7 @@ const StoreContextProvider = (props) => {
 
     setIsLoading(true);
     setError("");
+    setSuccessMessage("");
 
     try {
       const formData = new FormData();
@@ -110,7 +115,15 @@ const StoreContextProvider = (props) => {
         throw new Error(result.message || "Upload failed");
       }
 
-      loadUrls(result.data.urls || [], result.data.fileName);
+      const importedUrls = result.data.urls || [];
+
+      loadUrls(
+        importedUrls,
+        result.data.fileName,
+        `Imported ${importedUrls.length} URL${
+          importedUrls.length === 1 ? "" : "s"
+        } from ${result.data.fileName}.`,
+      );
       setSelectedFileId(result.data._id);
       await fetchPreviousFiles();
     } catch (err) {
@@ -143,6 +156,7 @@ const StoreContextProvider = (props) => {
   const selectPreviousFile = async (fileId) => {
     setIsLoading(true);
     setError("");
+    setSuccessMessage("");
 
     try {
       const response = await fetch(`${API_BASE_URL}/${fileId}`);
@@ -152,7 +166,15 @@ const StoreContextProvider = (props) => {
         throw new Error(result.message || "Could not load selected file");
       }
 
-      loadUrls(result.data.urls || [], result.data.fileName);
+      const savedUrls = result.data.urls || [];
+
+      loadUrls(
+        savedUrls,
+        result.data.fileName,
+        `Loaded ${savedUrls.length} URL${
+          savedUrls.length === 1 ? "" : "s"
+        } from ${result.data.fileName}.`,
+      );
       setSelectedFileId(result.data._id);
     } catch (err) {
       console.error("Selected file error:", err);
@@ -164,12 +186,14 @@ const StoreContextProvider = (props) => {
 
   const handleGoogleSheetImport = async () => {
     if (!googleSheetUrl.trim()) {
+      setSuccessMessage("");
       setError("Please enter a Google Sheets URL.");
       return;
     }
 
     setIsLoading(true);
     setError("");
+    setSuccessMessage("");
 
     try {
       const csvUrl = sheetUrlToCsvUrl(googleSheetUrl);
@@ -187,7 +211,13 @@ const StoreContextProvider = (props) => {
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const extractedUrls = extractUrlsFromSheet(firstSheet);
 
-      loadUrls(extractedUrls, "Google Sheet");
+      loadUrls(
+        extractedUrls,
+        "Google Sheet",
+        `Imported ${extractedUrls.length} URL${
+          extractedUrls.length === 1 ? "" : "s"
+        } from Google Sheet.`,
+      );
     } catch (err) {
       console.error("Google Sheet import error:", err);
       setError("Could not import this Google Sheet. Make sure it is public or published.");
@@ -208,6 +238,16 @@ const StoreContextProvider = (props) => {
     fetchPreviousFiles();
   }, []);
 
+  useEffect(() => {
+    if (!successMessage) return undefined;
+
+    const timer = setTimeout(() => {
+      setSuccessMessage("");
+    }, 3500);
+
+    return () => clearTimeout(timer);
+  }, [successMessage]);
+
   const contextValue = {
     urls,
     currentUrl,
@@ -219,6 +259,7 @@ const StoreContextProvider = (props) => {
     isLoading,
     isHistoryLoading,
     error,
+    successMessage,
     previousFiles,
     selectedFileId,
     handleFileUpload,
