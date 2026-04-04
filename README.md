@@ -6,6 +6,8 @@ The main idea of the project is simple. A user uploads an Excel file, CSV file, 
 
 I also added MongoDB storage so that uploaded files are saved and can be opened again later from the Previous Files section.
 
+The app also shows a small success popup when URLs are imported properly from an Excel file, CSV file, Google Sheet, or a saved file from history.
+
 ## What this project does
 
 - Upload Excel files and CSV files
@@ -15,6 +17,7 @@ I also added MongoDB storage so that uploaded files are saved and can be opened 
 - Let the user move between websites using Previous and Next
 - Save uploaded files in MongoDB Atlas
 - Show previously uploaded files and reload their URLs
+- Show a success notification after URLs are imported properly
 
 ## Tech stack used
 
@@ -47,6 +50,7 @@ It handles:
 - showing the extracted URLs
 - moving to next and previous website
 - opening saved files from database
+- showing success and error messages to the user
 
 State is managed using `StoreContext`.
 
@@ -68,8 +72,9 @@ It handles:
 3. Backend reads the first sheet and extracts URLs
 4. Backend stores file name and URLs in MongoDB
 5. Frontend receives the URLs and shows them
-6. User can click URLs or use Previous and Next buttons
-7. User can also open an older uploaded file from Previous Files
+6. A success popup is shown if the import works properly
+7. User can click URLs or use Previous and Next buttons
+8. User can also open an older uploaded file from Previous Files
 
 ## API routes
 
@@ -206,6 +211,7 @@ That is why there is also an **Open Website** option.
 - Previous and Next buttons
 - Responsive UI
 - MongoDB file history
+- Success popup after import
 
 ## Future improvements
 
